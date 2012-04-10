@@ -10,7 +10,7 @@
 
 *	Example:
 *	<div id='Your_Wrapper'>
-*		<ul class='data'>
+*		<ul class='tabs'>
 *			<li><a href='#panel_1'>Panel 1</a></li>
 *			<li><a href='#panel_2'>Panel 2</a></li>
 *		</ul>	
@@ -47,7 +47,7 @@
 		return this.each(function() {
  
 			function showPanel(panel){
-				
+
 				switch (options.style) {
 					case 'slide': 
 						function fx (e) { $(e).slideToggle('fast'); }
@@ -59,14 +59,12 @@
 						break;
 					default: 
 						panels.hide();
-						function fx (e) { $(e).show(); }
+						function fx (e) { 
+							$(e).show(); 
+						}
 						break;
 				} 
 				fx(panels.filter(panel));
-				//alert(panel);//Le soucis sur IE7 semble cenir de l� : le selecteur est pourri car toute l'URL ressot dans le ALERT...
-				
-				//wrapper.addClass('-wrapper');
-				//wrapper.css('height',wrapper.height);
 			}
 			
 			function showTab(tab){
@@ -79,27 +77,31 @@
 			var tabs = $(this).find('ul.tabs li');
 			var panels = $(this).find('.panel');
 			
-			// Display first panel
-			
-			if (tabs.hasClass('active') === true) {
-				var defaultActivePanel = '#'+tabs.filter('.active').contents().filter('a').attr('href').split('#')[1];
+			// Display first panel	
+			if ( tabs.hasClass('active') === true) {
+				var defaultActivePanel = '#'+tabs.filter('.active').children('a').attr('href').split('#')[1];
+				var defaultActiveTab = tabs.filter('.active');
 			} else {
-				showTab(tabs.eq(0));
-				var defaultActivePanel = '#'+tabs.eq(0).contents().filter('a').attr('href').split('#')[1];
+				var defaultActiveTab = tabs.eq(0);
+				//showTab(tabs.eq(0));
+				var defaultActivePanel = '#'+tabs.eq(0).children('a').attr('href').split('#')[1];
 			}
-			
+
+			showTab( defaultActiveTab );
 			showPanel(defaultActivePanel);
-			
-			$(defaultActivePanel).show();
+			options.callback( defaultActiveTab.children( 'a' ) );
+
+			//$(defaultActivePanel).show();
+			//options.callback( this );
+
 			// Display panel when tab is clicked
 			tabs.contents('a').click(function() {
 				if (!$(this).parent().hasClass("active")){
 					tabs.target =  '#'+$(this).attr('href').split('#')[1];
 					
-					
 						showTab($(this).parent());
 						showPanel(tabs.target);
-						options.callback();
+						options.callback( this );
 					
 				}
 				return false;
